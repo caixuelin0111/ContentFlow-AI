@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多平台内容自动化Agent矩阵 | ContentFlow AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        secondary: '#EC4899',
+                        accent: '#10B981',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                        'slide-in': 'slideIn 0.8s ease-out forwards',
+                        'typing': 'typing 3.5s steps(40, end)',
+                        'blink': 'blink .75s step-end infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slideIn: {
+                            '0%': { opacity: '0', transform: 'translateX(-30px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
+                        },
+                        typing: {
+                            'from': { width: '0' },
+                            'to': { width: '100%' }
+                        },
+                        blink: {
+                            'from, to': { borderColor: 'transparent' },
+                            '50%': { borderColor: 'currentColor' }
+                        }
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            .bg-glass {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+            .typing-effect {
+                overflow: hidden;
+                border-right: 0.15em solid;
+                white-space: nowrap;
+                margin: 0 auto;
+                animation: typing 3.5s steps(40, end), blink .75s step-end infinite;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gradient-to-br from-slate-50 to-blue-50 text-dark min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full z-50 bg-glass border-b border-white/20 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                    <i class="fa fa-robot text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold bg-gradient-to-r from-primary to-secondary text-gradient">ContentFlow AI</span>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#problem" class="text-slate-600 hover:text-primary transition-colors">核心痛点</a>
+                <a href="#architecture" class="text-slate-600 hover:text-primary transition-colors">Agent架构</a>
+                <a href="#demo" class="text-slate-600 hover:text-primary transition-colors">功能演示</a>
+                <a href="#results" class="text-slate-600 hover:text-primary transition-colors">量化成果</a>
+            </div>
+            <button class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg transition-all shadow-lg hover:shadow-primary/20 hover:shadow-xl">
+                申请试用
+            </button>
+        </div>
+    </nav>
+
+    <!-- 英雄区 -->
+    <section class="pt-32 pb-20 md:pt-40 md:pb-32">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-12 md:mb-0">
+                    <div class="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+                        AI驱动的内容生产革命
+                    </div>
+                    <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight mb-6">
+                        多平台内容自动化<br>
+                        <span class="bg-gradient-to-r from-primary to-secondary text-gradient">Agent矩阵</span>
+                    </h1>
+                    <p class="text-[clamp(1rem,2vw,1.25rem)] text-slate-600 mb-8 max-w-lg">
+                        基于多智能体协作的全链路内容生产与分发系统，一次创作，多平台自动适配发布，内容生产效率提升300%。
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#demo" class="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white px-8 py-3 rounded-lg transition-all shadow-lg hover:shadow-primary/30 hover:shadow-xl font-medium">
+                            立即体验
+                        </a>
+                        <button class="bg-white hover:bg-slate-50 text-dark border border-slate-200 px-8 py-3 rounded-lg transition-all shadow-md hover:shadow-lg font-medium">
+                            技术文档
+                        </button>
+                    </div>
+                </div>
+                <div class="md:w-1/2 relative">
+                    <div class="absolute -top-10 -left-10 w-72 h-72 bg-primary/20 rounded-full filter blur-3xl opacity-70 animate-pulse-slow"></div>
+                    <div class="absolute -bottom-10 -right-10 w-72 h-72 bg-secondary/20 rounded-full filter blur-3xl opacity-70 animate-pulse-slow" style="animation-delay: 2s;"></div>
+                    <div class="relative bg-white rounded-2xl shadow-2xl p-6 animate-float">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-semibold text-lg">内容生产仪表盘</h3>
+                            <div class="flex space-x-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                                    <i class="fa fa-file-text-o"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="h-2 bg-slate-200 rounded w-3/4 mb-2"></div>
+                                    <div class="h-2 bg-slate-200 rounded w-1/2"></div>
+                                </div>
+                                <span class="text-xs text-green-500 font-medium">完成</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                <div class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary">
+                                    <i class="fa fa-paint-brush"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="h-2 bg-slate-200 rounded w-2/3 mb-2"></div>
+                                    <div class="h-2 bg-slate-200 rounded w-1/3"></div>
+                                </div>
+                                <span class="text-xs text-yellow-500 font-medium">进行中</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent">
+                                    <i class="fa fa-share-alt"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="h-2 bg-slate-200 rounded w-5/6 mb-2"></div>
+                                    <div class="h-2 bg-slate-200 rounded w-2/5"></div>
+                                </div>
+                                <span class="text-xs text-blue-500 font-medium">排队中</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心痛点 -->
+    <section id="problem" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">传统内容生产的核心痛点</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto">内容创作者面临的普遍挑战，我们用AI Agent技术一一解决</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-slate-50 rounded-xl p-8 card-hover">
+                    <div class="w-14 h-14 rounded-lg bg-red-100 text-red-500 flex items-center justify-center mb-6">
+                        <i class="fa fa-clock-o text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">效率低下</h3>
+                    <p class="text-slate-600">同一内容需要为不同平台反复修改格式、调整风格，耗时耗力，内容产出速度慢。</p>
+                </div>
+                
+                <div class="bg-slate-50 rounded-xl p-8 card-hover">
+                    <div class="w-14 h-14 rounded-lg bg-orange-100 text-orange-500 flex items-center justify-center mb-6">
+                        <i class="fa fa-exclamation-triangle text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">质量不稳定</h3>
+                    <p class="text-slate-600">人工创作难以保持稳定的高质量输出，不同平台内容质量参差不齐，影响品牌形象。</p>
+                </div>
+                
+                <div class="bg-slate-50 rounded-xl p-8 card-hover">
+                    <div class="w-14 h-14 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center mb-6">
+                        <i class="fa fa-line-chart text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">数据反馈滞后</h3>
+                    <p class="text-slate-600">各平台数据分散，难以统一分析，无法根据数据及时调整内容策略，优化周期长。</p>
+                </div>
+            </div>
+            
+            <div class="mt-16 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl p-8 md:p-12">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-8 md:mb-0">
+                        <h3 class="text-2xl font-bold mb-4">我们的解决方案</h3>
+                        <p class="text-slate-700 mb-6">
+                            构建由5个专业Agent组成的协作矩阵，覆盖内容创作、平台适配、发布调度、数据分析和反馈优化全流程，实现内容生产的自动化闭环。
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <i class="fa fa-check-circle text-accent"></i>
+                                <span>一次输入，多平台自动生成适配内容</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fa fa-check-circle text-accent"></i>
+                                <span>智能分析各平台最佳发布时间</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fa fa-check-circle text-accent"></i>
+                                <span>数据驱动的内容持续优化</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 md:pl-12">
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-xl blur-xl opacity-20"></div>
+                            <div class="relative bg-white rounded-xl p-6 shadow-lg">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="font-semibold">效率对比</span>
+                                    <span class="text-sm text-slate-500">单篇内容全流程耗时</span>
+                                </div>
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">传统方式</span>
+                                            <span class="text-sm font-medium">4-6小时</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 rounded-full h-3">
+                                            <div class="bg-red-500 h-3 rounded-full" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">ContentFlow AI</span>
+                                            <span class="text-sm font-medium">30-45分钟</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 rounded-full h-3">
+                                            <div class="bg-accent h-3 rounded-full" style="width: 12%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Agent架构 -->
+    <section id="architecture" class="py-20 bg-gradient-to-br from-slate-900 to-slate-800 text-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">多Agent协作架构</h2>
+                <p class="text-slate-300 max-w-2xl mx-auto">5个专业Agent协同工作，形成完整的内容生产与优化闭环</p>
+            </div>
+            
+            <div class="relative">
+                <!-- 中心节点 -->
+                <div class="hidden md:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                    <div class="w-32 h-32 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-2xl shadow-primary/30">
+                        <div class="text-center">
+                            <i class="fa fa-cogs text-3xl mb-2"></i>
+                            <p class="font-bold">协调器</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 周围Agent节点 -->
+                <div class="grid md:grid-cols-5 gap-6 md:gap-0">
+                    <!-- 内容生成Agent -->
+                    <div class="md:col-span-1 md:transform md:-translate-y-24">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 h-full card-hover">
+                            <div class="w-12 h-12 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
+                                <i class="fa fa-pencil text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-3">内容生成Agent</h3>
+                            <p class="text-slate-400 text-sm">基于用户输入的主题和关键词，生成高质量原创内容初稿，支持多种文体和风格。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平台适配Agent -->
+                    <div class="md:col-span-1 md:transform md:translate-x-6 md:-translate-y-8">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 h-full card-hover">
+                            <div class="w-12 h-12 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4">
+                                <i class="fa fa-desktop text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-3">平台适配Agent</h3>
+                            <p class="text-slate-400 text-sm">将内容自动适配到微信、小红书、抖音、知乎等不同平台的格式和风格要求。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 发布调度Agent -->
+                    <div class="md:col-span-1 md:transform md:translate-x-6 md:translate-y-8">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 h-full card-hover">
+                            <div class="w-12 h-12 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center mb-4">
+                                <i class="fa fa-calendar text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-3">发布调度Agent</h3>
+                            <p class="text-slate-400 text-sm">分析各平台用户活跃时间，智能安排最佳发布时机，自动完成多平台发布。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 数据分析Agent -->
+                    <div class="md:col-span-1 md:transform md:-translate-x-6 md:translate-y-8">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 h-full card-hover">
+                            <div class="w-12 h-12 rounded-lg bg-yellow-500/20 text-yellow-400 flex items-center justify-center mb-4">
+                                <i class="fa fa-bar-chart text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-3">数据分析Agent</h3>
+                            <p class="text-slate-400 text-sm">统一收集各平台数据，生成可视化报告，分析内容表现和用户行为。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 反馈优化Agent -->
+                    <div class="md:col-span-1 md:transform md:-translate-x-6 md:-translate-y-8">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 h-full card-hover">
+                            <div class="w-12 h-12 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center mb-4">
+                                <i class="fa fa-refresh text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-3">反馈优化Agent</h3>
+                            <p class="text-slate-400 text-sm">根据数据分析结果，自动优化内容策略和生成参数，形成持续改进闭环。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 连接线（仅桌面端显示） -->
+                <div class="hidden md:block absolute inset-0">
+                    <svg class="w-full h-full" viewBox="0 0 1000 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M500 300 L200 150" stroke="url(#gradient1)" stroke-width="2" stroke-dasharray="5,5" />
+                        <path d="M500 300 L350 225" stroke="url(#gradient1)" stroke-width="2" stroke-dasharray="5,5" />
+                        <path d="M500 300 L650 225" stroke="url(#gradient1)" stroke-width="2" stroke-dasharray="5,5" />
+                        <path d="M500 300 L800 150" stroke="url(#gradient1)" stroke-width="2" stroke-dasharray="5,5" />
+                        <path d="M500 300 L350 375" stroke="url(#gradient1)" stroke-width="2" stroke-dasharray="5,5" />
+                        <defs>
+                            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#6366F1" />
+                                <stop offset="100%" stop-color="#EC4899" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="mt-20 bg-slate-800/50 border border-slate-700 rounded-xl p-8">
+                <h3 class="text-xl font-semibold mb-6 text-center">核心逻辑流</h3>
+                <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center mb-2">
+                            <span class="font-bold">1</span>
+                        </div>
+                        <span class="text-sm text-center">用户输入主题</span>
+                    </div>
+                    <div class="hidden md:block text-slate-500">
+                        <i class="fa fa-long-arrow-right"></i>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center mb-2">
+                            <span class="font-bold">2</span>
+                        </div>
+                        <span class="text-sm text-center">内容生成</span>
+                    </div>
+                    <div class="hidden md:block text-slate-500">
+                        <i class="fa fa-long-arrow-right"></i>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center mb-2">
+                            <span class="font-bold">3</span>
+                        </div>
+                        <span class="text-sm text-center">多平台适配</span>
+                    </div>
+                    <div class="hidden md:block text-slate-500">
+                        <i class="fa fa-long-arrow-right"></i>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center mb-2">
+                            <span class="font-bold">4</span>
+                        </div>
+                        <span class="text-sm text-center">智能发布</span>
+                    </div>
+                    <div class="hidden md:block text-slate-500">
+                        <i class="fa fa-long-arrow-right"></i>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center mb-2">
+                            <span class="font-bold">5</span>
+                        </div>
+                        <span class="text-sm text-center">数据分析</span>
+                    </div>
+                    <div class="hidden md:block text-slate-500">
+                        <i class="fa fa-long-arrow-right"></i>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center mb-2">
+                            <span class="font-bold">6</span>
+                        </div>
+                        <span class="text-sm text-center">持续优化</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能演示（实际可运行） -->
+    <section id="demo" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">实际功能演示</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto">输入一个主题，体验多Agent协作生成多平台内容的全过程</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <!-- 输入区域 -->
+                <div class="bg-white rounded-xl shadow-xl p-8 mb-8 border border-slate-100">
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">输入内容主题</label>
+                        <textarea id="topicInput" class="w-full p-4 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all" rows="3" placeholder="例如：2024年AI Agent技术发展趋势与应用场景"></textarea>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">选择目标平台</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label class="platform-option cursor-pointer">
+                                <input type="checkbox" class="hidden" value="wechat" checked>
+                                <div class="p-3 border border-slate-200 rounded-lg text-center transition-all hover:border-primary">
+                                    <i class="fa fa-wechat text-2xl text-green-500 mb-2"></i>
+                                    <p class="text-sm">微信公众号</p>
+                                </div>
+                            </label>
+                            <label class="platform-option cursor-pointer">
+                                <input type="checkbox" class="hidden" value="xiaohongshu" checked>
+                                <div class="p-3 border border-slate-200 rounded-lg text-center transition-all hover:border-primary">
+                                    <i class="fa fa-book text-2xl text-red-500 mb-2"></i>
+                                    <p class="text-sm">小红书</p>
+                                </div>
+                            </label>
+                            <label class="platform-option cursor-pointer">
+                                <input type="checkbox" class="hidden" value="zhihu" checked>
+                                <div class="p-3 border border-slate-200 rounded-lg text-center transition-all hover:border-primary">
+                                    <i class="fa fa-question-circle text-2xl text-blue-500 mb-2"></i>
+                                    <p class="text-sm">知乎</p>
+                                </div>
+                            </label>
+                            <label class="platform-option cursor-pointer">
+                                <input type="checkbox" class="hidden" value="douyin">
+                                <div class="p-3 border border-slate-200 rounded-lg text-center transition-all hover:border-primary">
+                                    <i class="fa fa-music text-2xl text-black mb-2"></i>
+                                    <p class="text-sm">抖音</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button id="generateBtn" class="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white py-4 rounded-lg transition-all shadow-lg hover:shadow-primary/30 hover:shadow-xl font-medium text-lg">
+                        开始生成内容
+                    </button>
+                </div>
+                
+                <!-- 生成过程展示 -->
+                <div id="processSection" class="hidden bg-white rounded-xl shadow-xl p-8 mb-8 border border-slate-100">
+                    <h3 class="text-xl font-semibold mb-6 flex items-center">
+                        <i class="fa fa-cogs text-primary mr-2 animate-spin"></i>
+                        Agent协作生成中...
+                    </h3>
+                    
+                    <div id="processSteps" class="space-y-4">
+                        <!-- 步骤会动态添加 -->
+                    </div>
+                </div>
+                
+                <!-- 结果展示区域 -->
+                <div id="resultsSection" class="hidden">
+                    <h3 class="text-xl font-semibold mb-6">生成结果</h3>
+                    
+                    <div id="contentTabs" class="mb-4 border-b border-slate-200">
+                        <ul class="flex flex-wrap -mb-px" id="tabList">
+                            <!-- 标签会动态添加 -->
+                        </ul>
+                    </div>
+                    
+                    <div id="tabContents" class="bg-white rounded-xl shadow-xl p-8 border border-slate-100">
+                        <!-- 内容会动态添加 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 量化成果 -->
+    <section id="results" class="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">量化成果与落地情况</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto">已在多个团队成功落地，显著提升内容生产效率</p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-8 mb-16">
+                <div class="bg-white rounded-xl p-8 text-center shadow-lg card-hover">
+                    <div class="text-4xl font-bold bg-gradient-to-r from-primary to-secondary text-gradient mb-2">300%</div>
+                    <p class="text-slate-600">内容生产效率提升</p>
+                </div>
+                <div class="bg-white rounded-xl p-8 text-center shadow-lg card-hover">
+                    <div class="text-4xl font-bold bg-gradient-to-r from-primary to-secondary text-gradient mb-2">12+</div>
+                    <p class="text-slate-600">已支持平台数量</p>
+                </div>
+                <div class="bg-white rounded-xl p-8 text-center shadow-lg card-hover">
+                    <div class="text-4xl font-bold bg-gradient-to-r from-primary to-secondary text-gradient mb-2">50+</div>
+                    <p class="text-slate-600">活跃团队用户</p>
+                </div>
+                <div class="bg-white rounded-xl p-8 text-center shadow-lg card-hover">
+                    <div class="text-4xl font-bold bg-gradient-to-r from-primary to-secondary text-gradient mb-2">200万+</div>
+                    <p class="text-slate-600">日均Token消耗</p>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0">
+                        <h3 class="text-2xl font-bold mb-6">技术实现细节</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold mb-2">基础模型</h4>
+                                <p class="text-slate-600">基于豆包大模型API，结合LangChain框架构建Agent能力</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">长链推理</h4>
+                                <p class="text-slate-600">采用思维链(Chain of Thought)技术，实现复杂内容的生成与优化</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">多Agent协作</h4>
+                                <p class="text-slate-600">基于消息队列实现Agent间通信，支持任务分发与结果汇总</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">记忆系统</h4>
+                                <p class="text-slate-600">使用向量数据库存储历史内容和用户偏好，实现个性化生成</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 md:border-l md:border-slate-200 md:pl-12">
+                        <h3 class="text-2xl font-bold mb-6">未来规划</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fa fa-check text-xs"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">支持更多平台</h4>
+                                    <p class="text-slate-600 text-sm">计划新增B站、视频号、LinkedIn等平台支持</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fa fa-check text-xs"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">多模态内容生成</h4>
+                                    <p class="text-slate-600 text-sm">集成图像和视频生成能力，实现全模态内容自动化</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fa fa-check text-xs"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">智能评论回复</h4>
+                                    <p class="text-slate-600 text-sm">自动回复用户评论，提升互动效率和用户体验</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fa fa-check text-xs"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">团队协作功能</h4>
+                                    <p class="text-slate-600 text-sm">支持多人协作、内容审核和权限管理</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2 mb-6 md:mb-0">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                        <i class="fa fa-robot text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold">ContentFlow AI</span>
+                </div>
+                <div class="flex space-x-6 mb-6 md:mb-0">
+                    <a href="#" class="text-slate-400 hover:text-white transition-colors">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-slate-400 hover:text-white transition-colors">
+                        <i class="fa fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-slate-400 hover:text-white transition-colors">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+                <p class="text-slate-400 text-sm">© 2024 ContentFlow AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 平台内容模板
+        const contentTemplates = {
+            wechat: (topic) => `# ${topic}：未来已来，你准备好了吗？
+
+## 引言
+在科技飞速发展的今天，${topic}正以前所未有的速度改变着我们的生活和工作方式。从概念提出到实际应用，这项技术已经走过了漫长的道路，如今正迎来爆发式增长的关键节点。
+
+## 一、什么是${topic}？
+${topic}是指利用人工智能技术，让系统能够自主理解、规划和执行复杂任务的智能体。与传统的AI系统不同，它具备自主决策能力，能够根据环境变化调整策略，完成一系列连贯的任务。
+
+## 二、核心技术突破
+1. **大语言模型的进步**：为${topic}提供了强大的自然语言理解和生成能力
+2. **多模态融合**：让${topic}能够处理文本、图像、音频等多种类型的信息
+3. **工具使用能力**：${topic}可以调用外部工具和API，扩展自身能力边界
+4. **记忆与推理**：具备长期记忆和逻辑推理能力，能够进行复杂问题求解
+
+## 三、主要应用场景
+- **企业自动化**：自动处理客户服务、数据分析、文档生成等工作
+- **个人助理**：成为每个人的智能助手，管理日程、处理邮件、提供建议
+- **软件开发**：自动编写代码、测试程序、修复bug
+- **教育领域**：个性化教学、智能答疑、学习路径规划
+
+## 四、未来发展趋势
+未来3-5年，${topic}将成为科技领域最热门的方向之一。我们预计会看到更多创新应用的出现，同时技术本身也会不断成熟和完善。
+
+## 结语
+${topic}代表了人工智能发展的新阶段，它将深刻改变我们的工作和生活方式。对于企业和个人来说，现在正是了解和拥抱这项技术的最佳时机。
+
+#AI #人工智能 #${topic.replace(/\s+/g, '')} #科技趋势`,
+            
+            xiaohongshu: (topic) => `✨ ${topic}｜普通人也能看懂的保姆级科普！
+
+谁懂啊家人们！最近${topic}真的太火了🔥
+到处都在讨论，但很多人还是一头雾水
+今天用最通俗的语言给大家讲明白
+看完你也能成为朋友圈最懂的人！
+
+💡 什么是${topic}？
+简单来说就是"会思考的AI"
+它不再是简单的问答机器
+而是能自己规划任务、解决问题的智能助手
+
+🌟 为什么它这么重要？
+✅ 能自动完成复杂工作
+✅ 24小时不间断工作
+✅ 学习能力超强
+✅ 可以调用各种工具
+
+📝 实际应用场景
+👉 帮你写文案、做PPT
+👉 自动回复客户消息
+👉 整理资料、生成报告
+👉 甚至能帮你写代码！
+
+🚀 未来发展
+未来几年这项技术会彻底改变很多行业
+现在了解就是抢占先机！
+
+姐妹们觉得${topic}会最先改变哪个行业？
+评论区聊聊你的看法👇
+
+#${topic.replace(/\s+/g, '')} #AI #人工智能 #科技 #干货分享 #知识科普 #未来科技`,
+            
+            zhihu: (topic) => `# 如何看待${topic}的发展前景？这可能是AI领域下一个十年的最大机会
+
+## 问题背景
+最近${topic}成为了科技圈最热门的话题，各大科技公司纷纷布局，相关创业公司也获得了巨额融资。那么，${topic}到底是什么？它的发展前景如何？普通人应该如何抓住这个机会？
+
+## 我的观点
+我认为${topic}代表了人工智能发展的下一个重要阶段，它将从根本上改变人机交互的方式，并且在未来5-10年内对各个行业产生深远影响。
+
+## 详细分析
+
+### 1. ${topic}的核心价值
+${topic}的核心价值在于它能够**自主完成复杂任务**。传统的AI系统只能完成单一、特定的任务，而${topic}可以理解复杂的指令，分解任务，调用工具，并且根据反馈不断调整策略。
+
+### 2. 技术成熟度分析
+目前${topic}技术还处于早期阶段，但已经展现出了巨大的潜力。随着大语言模型能力的不断提升，以及多模态、工具使用、记忆系统等技术的进步，${topic}的能力会越来越强。
+
+### 3. 行业应用前景
+- **企业服务**：这是${topic}最先落地的领域，能够显著提升企业运营效率
+- **软件开发**：${topic}将彻底改变软件开发的方式，大幅提升开发效率
+- **教育医疗**：在个性化教育和辅助诊断方面有巨大潜力
+- **创意产业**：能够辅助创作者完成各种创意工作
+
+### 4. 挑战与风险
+当然，${topic}的发展也面临一些挑战，包括技术可靠性、安全性、伦理问题以及就业影响等。这些问题需要技术开发者、政策制定者和社会各界共同努力解决。
+
+## 结论
+总的来说，${topic}是一个充满机遇和挑战的领域。对于技术从业者来说，这是一个值得深入研究的方向；对于企业来说，应该积极探索${topic}在业务中的应用；对于普通人来说，了解和学习这项技术，将有助于在未来的竞争中占据优势。
+
+你对${topic}有什么看法？欢迎在评论区讨论。`,
+            
+            douyin: (topic) => `# ${topic} 到底是什么？30秒给你讲明白！
+
+(开场音乐)
+
+大家好！今天我们来聊一个最近超级火的话题——${topic}！
+
+很多人都在说，但其实90%的人都不知道它到底是什么。
+
+简单来说，${topic}就是一个会自己思考、自己干活的AI助手。
+
+以前的AI，你让它做什么它就做什么，不会多做一步。
+
+但${topic}不一样！你只要告诉它你的目标，它会自己规划步骤，自己找工具，自己完成任务！
+
+比如你说"帮我做一个市场分析报告"，它会自己收集数据、分析数据、生成图表、撰写报告，全程不用你管！
+
+这就是为什么说${topic}会彻底改变我们的工作方式！
+
+未来很多重复性的工作都会被${topic}取代，我们只需要做更有创造性的事情。
+
+你觉得${topic}会最先取代什么工作？评论区告诉我！
+
+点赞关注，下期带你了解更多AI黑科技！
+
+#AI #人工智能 #${topic.replace(/\s+/g, '')} #科技 #干货`
+        };
+
+        // 平台名称映射
+        const platformNames = {
+            wechat: '微信公众号',
+            xiaohongshu: '小红书',
+            zhihu: '知乎',
+            douyin: '抖音'
+        };
+
+        // 平台图标映射
+        const platformIcons = {
+            wechat: 'fa-wechat text-green-500',
+            xiaohongshu: 'fa-book text-red-500',
+            zhihu: 'fa-question-circle text-blue-500',
+            douyin: 'fa-music text-black'
+        };
+
+        // 平台颜色映射
+        const platformColors = {
+            wechat: 'border-green-500 text-green-600',
+            xiaohongshu: 'border-red-500 text-red-600',
+            zhihu: 'border-blue-500 text-blue-600',
+            douyin: 'border-black text-black'
+        };
+
+        // 平台选择交互
+        document.querySelectorAll('.platform-option input').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const parent = this.closest('.platform-option').querySelector('div');
+                if (this.checked) {
+                    parent.classList.add('border-primary', 'bg-primary/5');
+                } else {
+                    parent.classList.remove('border-primary', 'bg-primary/5');
+                }
+            });
+            
+            // 初始化选中状态
+            if (checkbox.checked) {
+                checkbox.closest('.platform-option').querySelector('div').classList.add('border-primary', 'bg-primary/5');
+            }
+        });
+
+        // 生成按钮点击事件
+        document.getElementById('generateBtn').addEventListener('click', async function() {
+            const topic = document.getElementById('topicInput').value.trim();
+            if (!topic) {
+                alert('请输入内容主题');
+                return;
+            }
+            
+            const selectedPlatforms = Array.from(document.querySelectorAll('.platform-option input:checked')).map(cb => cb.value);
+            if (selectedPlatforms.length === 0) {
+                alert('请至少选择一个平台');
+                return;
+            }
+            
+            // 禁用按钮
+            this.disabled = true;
+            this.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>生成中...';
+            
+            // 显示过程区域
+            document.getElementById('processSection').classList.remove('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('processSteps').innerHTML = '';
+            
+            // 模拟多Agent生成过程
+            const steps = [
+                { agent: '协调器Agent', action: '接收用户请求，分解任务', delay: 800 },
+                { agent: '内容生成Agent', action: '分析主题，生成核心内容初稿', delay: 1500 },
+                { agent: '平台适配Agent', action: `为${selectedPlatforms.length}个平台生成适配内容`, delay: 2000 },
+                { agent: '质量检查Agent', action: '检查内容质量，优化表达', delay: 1200 },
+                { agent: '协调器Agent', action: '汇总结果，准备展示', delay: 600 }
+            ];
+            
+            for (let i = 0; i < steps.length; i++) {
+                await new Promise(resolve => setTimeout(resolve, steps[i].delay));
+                
+                const stepElement = document.createElement('div');
+                stepElement.className = 'flex items-center space-x-3 p-3 bg-slate-50 rounded-lg animate-slide-in';
+                stepElement.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0">
+                        <i class="fa fa-check"></i>
+                    </div>
+                    <div>
+                        <span class="font-medium">${steps[i].agent}</span>
+                        <span class="text-slate-600">：${steps[i].action}</span>
+                    </div>
+                `;
+                document.getElementById('processSteps').appendChild(stepElement);
+            }
+            
+            // 生成结果
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // 隐藏过程区域，显示结果区域
+            document.getElementById('processSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            // 生成标签和内容
+            const tabList = document.getElementById('tabList');
+            const tabContents = document.getElementById('tabContents');
+            tabList.innerHTML = '';
+            tabContents.innerHTML = '';
+            
+            selectedPlatforms.forEach((platform, index) => {
+                // 创建标签
+                const tabItem = document.createElement('li');
+                tabItem.className = 'mr-2';
+                tabItem.innerHTML = `
+                    <button class="inline-block py-4 px-4 text-sm font-medium text-center border-b-2 ${index === 0 ? platformColors[platform] : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'} rounded-t-lg" 
+                            data-platform="${platform}">
+                        <i class="fa ${platformIcons[platform]} mr-2"></i>${platformNames[platform]}
+                    </button>
+                `;
+                tabList.appendChild(tabItem);
+                
+                // 创建内容
+                const contentItem = document.createElement('div');
+                contentItem.className = `tab-content ${index === 0 ? '' : 'hidden'}`;
+                contentItem.id = `content-${platform}`;
+                contentItem.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-semibold">${platformNames[platform]}内容</h4>
+                        <button class="copy-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg transition-colors text-sm" 
+                                data-target="content-text-${platform}">
+                            <i class="fa fa-copy mr-1"></i>复制内容
+                        </button>
+                    </div>
+                    <div id="content-text-${platform}" class="bg-slate-50 p-6 rounded-lg whitespace-pre-wrap text-slate-700 max-h-96 overflow-y-auto">
+                        ${contentTemplates[platform](topic)}
+                    </div>
+                `;
+                tabContents.appendChild(contentItem);
+            });
+            
+            // 标签切换事件
+            document.querySelectorAll('#tabList button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const platform = this.getAttribute('data-platform');
+                    
+                    // 移除所有激活状态
+                    document.querySelectorAll('#tabList button').forEach(btn => {
+                        btn.className = 'inline-block py-4 px-4 text-sm font-medium text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 rounded-t-lg';
+                    });
+                    
+                    // 隐藏所有内容
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    
+                    // 激活当前标签和内容
+                    this.className = `inline-block py-4 px-4 text-sm font-medium text-center border-b-2 ${platformColors[platform]} rounded-t-lg`;
+                    document.getElementById(`content-${platform}`).classList.remove('hidden');
+                });
+            });
+            
+            // 复制按钮事件
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const text = document.getElementById(targetId).innerText;
+                    
+                    navigator.clipboard.writeText(text).then(() => {
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="fa fa-check mr-1"></i>已复制';
+                        this.classList.add('bg-green-100', 'text-green-700');
+                        this.classList.remove('bg-slate-100', 'text-slate-700');
+                        
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.classList.remove('bg-green-100', 'text-green-700');
+                            this.classList.add('bg-slate-100', 'text-slate-700');
+                        }, 2000);
+                    });
+                });
+            });
+            
+            // 重新启用按钮
+            this.disabled = false;
+            this.innerHTML = '重新生成内容';
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white/90', 'shadow-md');
+                navbar.classList.remove('bg-glass');
+            } else {
+                navbar.classList.remove('bg-white/90', 'shadow-md');
+                navbar.classList.add('bg-glass');
+            }
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-slide-up');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section > div > div:not(.animate-float)').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
